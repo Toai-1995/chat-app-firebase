@@ -1,26 +1,28 @@
 import React from 'react';
 import { Row, Col, Button, Typography } from 'antd';
-import firebase, { auth } from '../../firebase/config'
-import { useHistory } from 'react-router-dom';
+import firebase, { auth, db } from '../../firebase/config';
 
 const { Title } = Typography
 const fbProvider = new firebase.auth.FacebookAuthProvider();
 const ggProvider = new firebase.auth.GoogleAuthProvider();
 
 export default function Login() {
-  const history = useHistory();
   const loginFacebook = () => {
-    console.log('click');
     auth.signInWithPopup(fbProvider);
   }
-  const loginGoogle = () => {
-    auth.signInWithPopup(ggProvider);
-  }
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      history.push('/')
+  const loginGoogle = async () => {
+    const data = await auth.signInWithPopup(ggProvider);
+    const { additionalUserInfo, user } = data;
+    if (additionalUserInfo?.isNewUser) {
+      db.collection('user').add({
+        displayName: user.displayName,
+        email: user.email,
+        photoULR: user.photoURL,
+        providerId: additionalUserInfo.providerId
+      })
     }
-  })
+  }
+
   return (
     <div>
       <Row justify='center' style={{ height: 800 }}>
