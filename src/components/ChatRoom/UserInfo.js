@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Avatar, Typography } from 'antd';
 import styled from 'styled-components';
 import { auth } from '../../firebase/config';
-import { useHistory } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthProvider';
 
 const WrapperStyled = styled.div`
   display: flex;
@@ -12,20 +12,32 @@ const WrapperStyled = styled.div`
 
   .username {
     color: #fff;
+    // display: block;
     margin-left: 5px;
   }
 `
 
 export default function UserInfo() {
-  const history = useHistory()
+  const user = useContext(AuthContext);
+  const { displayName, photoURL } = user
+  // useEffect(() => {
+  //   db.collection('user').onSnapshot(snapshot => {
+  //     const data = snapshot.docs.map(doc => ({
+  //       ...doc.data(),
+  //       id: doc.id,
+  //     }));
+  //     // console.log({ data })
+  //   })
+  // }, [])
   const handleLogOut = () => {
     auth.signOut();
   }
+
   return (
     <WrapperStyled>
       <div>
-        <Avatar>T</Avatar>
-        <Typography.Text className='username'>ABC</Typography.Text>
+        <Avatar src={photoURL}>{photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}</Avatar>
+        <Typography.Text className='username'>{displayName}</Typography.Text>
       </div>
       <Button onClick={handleLogOut} ghost>Đăng xuất</Button>
     </WrapperStyled>

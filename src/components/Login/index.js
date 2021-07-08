@@ -1,27 +1,39 @@
 import React from 'react';
 import { Row, Col, Button, Typography } from 'antd';
-import firebase, { auth, db } from '../../firebase/config';
+import firebase, { auth } from '../../firebase/config';
+import { addDocument } from '../../firebase/services';
 
 const { Title } = Typography
 const fbProvider = new firebase.auth.FacebookAuthProvider();
 const ggProvider = new firebase.auth.GoogleAuthProvider();
 
 export default function Login() {
-  const loginFacebook = () => {
-    auth.signInWithPopup(fbProvider);
-  }
+  const loginFacebook = async () => {
+    const data = await auth.signInWithPopup(fbProvider);
+    const { additionalUserInfo, user } = data;
+    if (additionalUserInfo?.isNewUser) {
+      addDocument('users', {
+        displayName: user.displayName,
+        email: user.email,
+        photoULR: user.photoURL,
+        uid: user.uid,
+        providerId: additionalUserInfo.providerId
+      })
+    }
+  };
   const loginGoogle = async () => {
     const data = await auth.signInWithPopup(ggProvider);
     const { additionalUserInfo, user } = data;
     if (additionalUserInfo?.isNewUser) {
-      db.collection('user').add({
+      addDocument('users', {
         displayName: user.displayName,
         email: user.email,
         photoULR: user.photoURL,
+        uid: user.uid,
         providerId: additionalUserInfo.providerId
-      })
-    }
-  }
+      });
+    };
+  };
 
   return (
     <div>

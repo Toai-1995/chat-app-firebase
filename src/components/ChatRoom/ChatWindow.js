@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Button, Tooltip, Avatar, Form, Input } from 'antd';
 import styled from 'styled-components';
 import { UserAddOutlined } from '@ant-design/icons';
 import Message from './Message';
+import { AppContext } from '../../context/AppProvider';
 
 const WrapperStyled = styled.div`
   height: 100vh;
@@ -67,6 +68,10 @@ const MessageListStyled = styled.div`
 `
 
 export default function ChatWindow() {
+  const { rooms, selectedRoomId } = useContext(AppContext);
+  const selectedRoom = useMemo(
+    () => rooms.find(room => room.id === selectedRoomId),
+    [rooms, selectedRoomId]);
   return (
     <WrapperStyled>
       <HeaderStyled>
