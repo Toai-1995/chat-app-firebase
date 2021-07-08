@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { db } from '../firebase/config';
 
 export const useFilestore = (collection, condition) => {
@@ -13,15 +13,12 @@ export const useFilestore = (collection, condition) => {
     // 
     */
     if (condition) {
-      if (!(condition.compareValue || condition.compareValue.length)) {
-        console.log(condition.compareValue);
+      if (!condition.compareValue || !condition.compareValue.length) {
         return;
       }
       collectionRef = collectionRef.where(condition.fieldName, condition.operator, condition.compareValue)
     }
-    console.log('usefilestore ')
     const unsbcribe = collectionRef.onSnapshot(snapshot => {
-      console.log('doc', snapshot.docs);
       const documents = snapshot.docs.map(doc => (
         {
           ...doc.data(),

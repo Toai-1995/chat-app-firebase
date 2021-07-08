@@ -8,21 +8,32 @@ const fbProvider = new firebase.auth.FacebookAuthProvider();
 const ggProvider = new firebase.auth.GoogleAuthProvider();
 
 export default function Login() {
-  const loginFacebook = () => {
-    auth.signInWithPopup(fbProvider);
-  }
+  const loginFacebook = async () => {
+    const data = await auth.signInWithPopup(fbProvider);
+    const { additionalUserInfo, user } = data;
+    if (additionalUserInfo?.isNewUser) {
+      addDocument('users', {
+        displayName: user.displayName,
+        email: user.email,
+        photoULR: user.photoURL,
+        uid: user.uid,
+        providerId: additionalUserInfo.providerId
+      })
+    }
+  };
   const loginGoogle = async () => {
     const data = await auth.signInWithPopup(ggProvider);
     const { additionalUserInfo, user } = data;
     if (additionalUserInfo?.isNewUser) {
-      addDocument('user', {
+      addDocument('users', {
         displayName: user.displayName,
         email: user.email,
         photoULR: user.photoURL,
+        uid: user.uid,
         providerId: additionalUserInfo.providerId
       });
-    }
-  }
+    };
+  };
 
   return (
     <div>
