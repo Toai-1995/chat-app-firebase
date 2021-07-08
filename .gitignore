@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+#setup emulators
+/emulator
+
 # testing
 /coverage
 
