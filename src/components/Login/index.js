@@ -15,7 +15,7 @@ export default function Login() {
       addDocument('users', {
         displayName: user.displayName,
         email: user.email,
-        photoULR: user.photoURL,
+        photoURL: user.photoURL,
         uid: user.uid,
         providerId: additionalUserInfo.providerId
       })

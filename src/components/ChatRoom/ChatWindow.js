@@ -1,5 +1,5 @@
-import React, { useContext, useMemo } from 'react';
-import { Button, Tooltip, Avatar, Form, Input } from 'antd';
+import React, { useContext } from 'react';
+import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 import styled from 'styled-components';
 import { UserAddOutlined } from '@ant-design/icons';
 import Message from './Message';
@@ -68,46 +68,54 @@ const MessageListStyled = styled.div`
 `
 
 export default function ChatWindow() {
-  const { rooms, selectedRoomId } = useContext(AppContext);
-  const selectedRoom = useMemo(
-    () => rooms.find(room => room.id === selectedRoomId),
-    [rooms, selectedRoomId]);
+  const { selectedRoom, members, setIsInviteModalVisible } = useContext(AppContext);
   return (
     <WrapperStyled>
-      <HeaderStyled>
-        <div className='header_info'>
-          <p className='header_title'>Room1</p>
-          <span className='header_description'> this is romm</span>
-        </div>
-        <ButtonStyled>
-          <Button icon={<UserAddOutlined />} type='text'>Mời</Button>
-          <Avatar.Group size='small' maxCount={2}>
-            <Tooltip title='A'>
-              <Avatar>A</Avatar>
-            </Tooltip>
-            <Tooltip title='B'>
-              <Avatar>B</Avatar>
-            </Tooltip>
-            <Tooltip title='C'>
-              <Avatar>Cong</Avatar>
-            </Tooltip>
-          </Avatar.Group>
-        </ButtonStyled>
-      </HeaderStyled>
-      <ContentStyled>
-        <MessageListStyled>
-          <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-          <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-          <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-          <Message text='hello1' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-        </MessageListStyled>
-        <FormStyled>
-          <Form.Item>
-            <Input bordered={false} autoComplete='off'></Input>
-          </Form.Item>
-          <Button type='primary'>Gửi</Button>
-        </FormStyled>
-      </ContentStyled>
+      {selectedRoom.id ? (
+        <>
+          <HeaderStyled>
+            <div className='header_info'>
+              <p className='header_title'>{selectedRoom ? selectedRoom.name : ''}</p>
+              <span className='header_description'>{selectedRoom ? selectedRoom.description : ''}</span>
+            </div>
+            <ButtonStyled>
+              <Button
+                icon={<UserAddOutlined />}
+                type='text'
+                onClick={() => setIsInviteModalVisible(true)}
+              >Mời</Button>
+              <Avatar.Group size='small' maxCount={2}>
+                {members ? (members.map(member => (
+                  <Tooltip title={member.displayName} key={member.id}>
+                    <Avatar src={member.photoULR}></Avatar>
+                  </Tooltip>
+                ))) : ''}
+              </Avatar.Group>
+            </ButtonStyled>
+          </HeaderStyled>
+          <ContentStyled>
+            <MessageListStyled>
+              <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
+              <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
+              <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
+              <Message text='hello1' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
+            </MessageListStyled>
+            <FormStyled>
+              <Form.Item>
+                <Input bordered={false} autoComplete='off'></Input>
+              </Form.Item>
+              <Button type='primary'>Gửi</Button>
+            </FormStyled>
+          </ContentStyled>
+        </>)
+        : (<Alert
+          message='hãy chọn phòng chat'
+          type='info'
+          showIcon
+          style={{ margin: 5 }}
+          closable
+        />)
+      }
     </WrapperStyled>
   )
 }
