@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { db } from '../firebase/config';
 
 export const useFilestore = (collection, condition) => {
-  const [document, setDocument] = useState([])
+  const [document, setDocument] = useState([]);
+
   useEffect(() => {
-    let collectionRef = db.collection(collection).orderBy('createAt');
+    let collectionRef = db.collection(collection).orderBy('createAt', 'desc');
     /*
     // condition = 
       fieldName: '',
@@ -16,8 +17,8 @@ export const useFilestore = (collection, condition) => {
       if (!condition.compareValue || !condition.compareValue.length) {
         return;
       }
-      collectionRef = collectionRef.where(condition.fieldName, condition.operator, condition.compareValue)
-    }
+      collectionRef = collectionRef.where(condition.fieldName, condition.operator, condition.compareValue);
+    };
     const unsbcribe = collectionRef.onSnapshot(snapshot => {
       const documents = snapshot.docs.map(doc => (
         {
@@ -25,8 +26,7 @@ export const useFilestore = (collection, condition) => {
           id: doc.id,
         }
       ))
-      setDocument(documents)
-      // console.log({ documents });
+      return setDocument(documents);
     });
     return () => unsbcribe();
   }, [condition, collection]);

@@ -1,9 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 import styled from 'styled-components';
 import { UserAddOutlined } from '@ant-design/icons';
 import Message from './Message';
 import { AppContext } from '../../context/AppProvider';
+import { addDocument } from '../../firebase/services';
+import { AuthContext } from '../../context/AuthProvider';
+import { useFilestore } from '../../hook/useFilestore';
+
 
 const WrapperStyled = styled.div`
   height: 100vh;
@@ -62,6 +66,20 @@ const FormStyled = styled(Form)`
 `;
 
 const MessageListStyled = styled.div`
+  display: flex;
+  flex-direction: column-reverse;
+  // align-items: flex-end; 
+  max-height: 100%;
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; / make scrollbar transparent /
+}
+`
+const MessageofMeStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; 
   max-height: 100%;
   over-flow-y: auto;
 
@@ -69,6 +87,39 @@ const MessageListStyled = styled.div`
 
 export default function ChatWindow() {
   const { selectedRoom, members, setIsInviteModalVisible } = useContext(AppContext);
+  const users = useContext(AuthContext);
+  const { uid, photoURL, displayName } = users;
+  const [inputValue, setInputValue] = useState('');
+  const [form] = Form.useForm();
+  const inputRef = React.useRef(null);
+
+  const handleInputOnchange = (e) => {
+    setInputValue(e.target.value);
+  }
+
+  const handleOnSubmit = () => {
+    inputRef.current.focus();
+    if (inputValue === '') {
+      return;
+    }
+    addDocument('messages', {
+      text: inputValue,
+      uid,
+      photoURL,
+      roomId: selectedRoom.id,
+      displayName,
+    });
+    setInputValue('')
+    form.resetFields();
+  }
+  const conditions = useMemo(() => {
+    return {
+      fieldName: 'roomId',
+      operator: '==',
+      compareValue: selectedRoom.id
+    }
+  }, [selectedRoom.id])
+  const messages = useFilestore('messages', conditions);
   return (
     <WrapperStyled>
       {selectedRoom.id ? (
@@ -84,10 +135,10 @@ export default function ChatWindow() {
                 type='text'
                 onClick={() => setIsInviteModalVisible(true)}
               >Mời</Button>
-              <Avatar.Group size='small' maxCount={2}>
+              <Avatar.Group size='small' maxCount={5}>
                 {members ? (members.map(member => (
                   <Tooltip title={member.displayName} key={member.id}>
-                    <Avatar src={member.photoULR}></Avatar>
+                    <Avatar src={member.photoURL}>{member.photoURL ? '' : member.displayName.charAt(0).toUpperCase()}</Avatar>
                   </Tooltip>
                 ))) : ''}
               </Avatar.Group>
@@ -95,16 +146,35 @@ export default function ChatWindow() {
           </HeaderStyled>
           <ContentStyled>
             <MessageListStyled>
-              <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-              <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-              <Message text='hello' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
-              <Message text='hello1' displayName='Toai' createdAt='12312313123123' photoURL='https://lh3.googleusercontent.com/a-/AOh14GjjvJjpeUQ-kfkFpdrAV7dAecj5lc0bMHfPu7xB=s96-c'></Message>
+              {messages.map(mess => (
+                uid === mess.uid ? (<MessageofMeStyled key={mess.id}>
+                  <Message
+                    text={mess.text}
+                    displayName={mess.displayName}
+                    createdAt={mess.createAt}
+                    photoURL={mess.photoURL}>
+                  </Message>
+                </MessageofMeStyled>)
+                  :
+                  <Message
+                    text={mess.text}
+                    key={mess.id}
+                    displayName={mess.displayName}
+                    createdAt={mess.createAt}
+                    photoURL={mess.photoURL}>
+                  </Message>
+              ))}
             </MessageListStyled>
-            <FormStyled>
-              <Form.Item>
-                <Input bordered={false} autoComplete='off'></Input>
+            <FormStyled form={form}>
+              <Form.Item name='messages'>
+                <Input
+                  bordered={false} autoComplete='off'
+                  onChange={handleInputOnchange}
+                  onPressEnter={handleOnSubmit}
+                  ref={inputRef}
+                ></Input>
               </Form.Item>
-              <Button type='primary'>Gửi</Button>
+              <Button type='primary' onClick={handleOnSubmit}>Gửi</Button>
             </FormStyled>
           </ContentStyled>
         </>)
@@ -116,6 +186,6 @@ export default function ChatWindow() {
           closable
         />)
       }
-    </WrapperStyled>
+    </WrapperStyled >
   )
 }

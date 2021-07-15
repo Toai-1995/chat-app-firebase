@@ -9,7 +9,7 @@ export default function AppProvider({ children }) {
   const [selectedRoomId, setSelectedRoomId] = useState('');
   const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
   const user = useContext(AuthContext);
-  const { uid } = user
+  const { uid } = user;
   // room = { 
   //   name: nameroom,
   //   decription: 'mo ta',
@@ -23,7 +23,8 @@ export default function AppProvider({ children }) {
       compareValue: uid,
     }
   }, [uid]);
-  const rooms = useFilestore('rooms', roomCondition)
+  const rooms = useFilestore('rooms', roomCondition);
+  // db.collection('rooms').get().then(room => console.log(room.docs.map(doc => doc.data())));
 
   const selectedRoom = useMemo(
     () => rooms.find(room => room.id === selectedRoomId) || {},

@@ -27,4 +27,11 @@ yarn-error.log*
 
 #setup-emulator
 /emulators
+firebase.json
+.firebaserc
+#build
+/.firebase
+/.github
+
+
 

@@ -26,7 +26,7 @@ const LinkStyled = styled(Typography.Link)`
 `
 
 export default function RoomList() {
-  const { rooms, setIsAddRoomVisible, setSelectedRoomId } = useContext(AppContext)
+  const { rooms, setIsAddRoomVisible, setSelectedRoomId } = useContext(AppContext);
   return (
     <Collapse ghost defaultActiveKey={['1']} >
       <PanalStyled header='Danh sách các phòng' key='1'>
