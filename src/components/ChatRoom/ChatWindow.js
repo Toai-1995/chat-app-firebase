@@ -152,7 +152,8 @@ export default function ChatWindow() {
                     text={mess.text}
                     displayName={mess.displayName}
                     createdAt={mess.createAt}
-                    photoURL={mess.photoURL}>
+                    photoURL={mess.photoURL}
+                  >
                   </Message>
                 </MessageofMeStyled>)
                   :
