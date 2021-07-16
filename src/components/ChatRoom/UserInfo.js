@@ -20,15 +20,6 @@ const WrapperStyled = styled.div`
 export default function UserInfo() {
   const user = useContext(AuthContext);
   const { displayName, photoURL } = user
-  // useEffect(() => {
-  //   db.collection('user').onSnapshot(snapshot => {
-  //     const data = snapshot.docs.map(doc => ({
-  //       ...doc.data(),
-  //       id: doc.id,
-  //     }));
-  //     // console.log({ data })
-  //   })
-  // }, [])
   const handleLogOut = () => {
     auth.signOut();
   }
