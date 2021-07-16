@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { AuthContext } from './AuthProvider';
-import { useFilestore } from '../hook/useFilestore';
+import { useFilestore, useFilestoreCollectionGroup } from '../hook/useFilestore';
 
 export const AppContext = createContext();
 
@@ -37,7 +37,7 @@ export default function AppProvider({ children }) {
       compareValue: selectedRoom.members,
     }
   }, [selectedRoom.members])
-  const members = useFilestore('users', userCondittion);
+  const members = useFilestoreCollectionGroup('users', userCondittion);
   return (
     <AppContext.Provider value={{
       rooms,

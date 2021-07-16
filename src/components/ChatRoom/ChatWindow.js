@@ -152,7 +152,8 @@ export default function ChatWindow() {
                     text={mess.text}
                     displayName={mess.displayName}
                     createdAt={mess.createAt}
-                    photoURL={mess.photoURL}>
+                    photoURL={mess.photoURL}
+                  >
                   </Message>
                 </MessageofMeStyled>)
                   :
@@ -172,6 +173,7 @@ export default function ChatWindow() {
                   onChange={handleInputOnchange}
                   onPressEnter={handleOnSubmit}
                   ref={inputRef}
+                  autoFocus
                 ></Input>
               </Form.Item>
               <Button type='primary' onClick={handleOnSubmit}>Gửi</Button>

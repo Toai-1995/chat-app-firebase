@@ -6,23 +6,46 @@ import { AppContext } from '../../context/AppProvider';
 
 const { Panel } = Collapse;
 const PanalStyled = styled(Panel)`
-  &&&{
+   &&&{
     .ant-collapse-header, p {
       color: #fff;
     }
     .ant-collapse-content-box {
-      padding: 0 40px;
+      padding: 0 10px;
     }
     .add-room {
       color: #fff;
       padding: 0;
+      font-size: 10px;
+    }
+  }
+  @media (min-width: 1024px) {
+    &&&{
+      .ant-collapse-header, p {
+        color: #fff;
+      }
+      .ant-collapse-content-box {
+        padding: 0 50px;
+      }
+      .add-room {
+        color: #fff;
+        padding: 0;
+        font-size: 13px;
+      }
     }
   }
 `
 const LinkStyled = styled(Typography.Link)`
+  width: 100%;
   display: block;
   margin-bottom: 5px;
   color: #fff;
+
+@media (min-width: 1024px){
+  display: block;
+  margin-bottom: 5px;
+  color: #fff;
+}
 `
 
 export default function RoomList() {
@@ -30,10 +53,13 @@ export default function RoomList() {
   return (
     <Collapse ghost defaultActiveKey={['1']} >
       <PanalStyled header='Danh sách các phòng' key='1'>
-        {rooms.map(room => <LinkStyled
-          key={room.id}
-          onClick={() => setSelectedRoomId(room.id)}
-        >{room.name}</LinkStyled>)}
+        {rooms.map(room =>
+          <LinkStyled
+            key={room.id}
+            ellipsis={true}
+            onClick={() => setSelectedRoomId(room.id)}
+          >{room.name}
+          </LinkStyled>)}
         <Button
           type='text'
           icon={<PlusSquareOutlined />}
